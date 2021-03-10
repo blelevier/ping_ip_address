@@ -38,7 +38,7 @@ python3 ping.py 58 123 237
 ## Results
 
 </br>
-<img src="images/img1.png"/>
+<img src="img1.PNG"/>
 
 ## Future Work 
 
