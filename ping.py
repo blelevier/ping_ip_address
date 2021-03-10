@@ -33,7 +33,7 @@ def ping(ip):
     Return:
         ping_reply.returncode (bool): Depending if ping was successful or not
     """
-    ping_reply = subprocess.run(["ping", "-n", "2", ip],
+    ping_reply = subprocess.run(["ping", "-c", "2", ip],
                                 stderr=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
     if ping_reply.returncode == 0:
@@ -102,7 +102,7 @@ def test_connection():
     print("Pinging Google and Yahoo to test connection...")
     ip3 = ["google.com", "yahoo.com"]
     for ip in ip3:
-        ping_reply = subprocess.run(["ping", "-n", "2", ip])
+        ping_reply = subprocess.run(["ping", "-c", "2", ip])
         if ping_reply.returncode == 0:
             print("Success pinging " + ip)
         else:
