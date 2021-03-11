@@ -14,7 +14,7 @@ Implemented using multiprocessing package. In my machine it is running in less t
 Attempting twice.
 - Your code MUST have no PEP8 issues and MUST include comments and docstrings where appropriate.
 - Please include mock-tests, unit-tests, any kind of tests that you write to help prove that your code behaves as expected.</br>
-As those addresses are not reachable in my computer, first I tested the program for known addresses like google.com or any website. Then, to test the selection of the ip addresses, I just introduced a dict with some predefined values to see if the parsing was working.
+As those addresses are not reachable in my computer, first I tested the program for known addresses like google.com or any website. Then, to test the selection of the ip addresses, I introduced some predefined data to see if the outputs of the functions are correct.
 - As we are an Ubuntu/Linux shop, implementing it there (or maybe macOS) would be preferred but not absolutely required.</br>
 Developed on Windows 10, but also tested on Ubuntu 18.04 virtual machine.
 -BONUS: Allow specific IP addresses to be skipped based on their last octet, so for example we could exclude 192.168.1.56 and 192.168.2.56 by specifying '56' to some function in your code,
@@ -26,7 +26,13 @@ Developed on Windows 10, but also tested on Ubuntu 18.04 virtual machine.
 git clone https://github.com/blelevier/ping_ip_address.git
 ```
 
-2. Change directory and run the file:</br>
+2. Run some tests to check your connection and review some functions of the script.
+```
+python3 test_ping.py
+```
+
+
+3. Change directory and run the file:</br>
 ```
 python3 ping.py
 ```
@@ -42,7 +48,7 @@ python3 ping.py 58 123 237
 
 ## Future Work 
 
-- Analize complexity and explore other approaches to multi-threading/tasking to make it faster and cleaner (removing the global variable).
+- Analize complexity and explore other approaches to multi-threading/tasking to make it faster.
 - Explore maximum number of available cores to increase the number of threads.
 - Get more familiar with wireshark, tcpdump.
 
