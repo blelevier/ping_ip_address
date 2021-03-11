@@ -6,8 +6,6 @@ import time
 
 from constants import BASE1, BASE2
 
-my_dict1 = {}  # Global Variable (TODO: Find a cleaner approach)
-
 
 def skip_address(skippers, ip):
     """Allow specific IP addresses to be skipped according to user input.
@@ -31,34 +29,50 @@ def ping(ip):
     Args:
         ip (list): list of ip addresses to be pinged
     Return:
-        ping_reply.returncode (bool): Depending if ping was successful or not
+         (string): Depending if ping was successful(0) or not(1)
+                   Example: '0__192.168.2.239' or '1__192.168.1.80'
+                   It will be parsed later.
     """
     ping_reply = subprocess.run(["ping", "-c", "2", ip],
                                 stderr=subprocess.PIPE,
-                                stdout=subprocess.PIPE)
-    if ping_reply.returncode == 0:
-        my_dict1[ip] = "Yes"
-    else:
-        my_dict1[ip] = "No"
-    return ping_reply.returncode
+                                stdout=subprocess.PIPE) 
+    return '{}__{}'.format(ping_reply.returncode, ip)
 
 
 def start_pinging(ip):
-    """
-    Initialize a number of threads (maybe we can run more than this?).
+    """Initialize a number of threads (maybe we can run more than this?).
     Implemented using the multiprocessing package, using the basic
     example of data parallellism with Pool.
     Args:
         ip (list): list of ip addresses to be pinged
+    Return:
+        results (list): Every element will contain the ip pinged and the
+                        result. It will be parsed later on and converted
+                        into a dict.
     """
     num_threads = 15 * multiprocessing.cpu_count()
     p = multiprocessing.dummy.Pool(num_threads)
-    p.map(ping, ip)
+    results = p.map(ping, ip)
+    return results
 
 
-def find_differences():
+def parse_results(results):
+    """Parse the ip addresses string list and convert it to a dict with the ip
+    address as the key and the value as the result. Example:
+    ['0__192.168.2.239', '1__192.168.1.80'] to {'192.168.2.239' : 0,
+    '192.168.1.80' : 1}
+    Args:
+        results (list): list of ip addresses and values to be parsed
+    Returns:
+        (dict)
     """
-    Compare the value in the dictionary to detect which one are different.
+    return {result.split('__')[1]: int(result.split('__')[0]) for result
+            in results}
+
+
+def find_differences(my_dict1):
+    """
+    Compare the value in the dictionary to detect which pings are different.
     For example: '192.168.1.55' vs '192.168.2.55'
     Return:
         octet (list): ip addresses that have different values.
@@ -94,31 +108,13 @@ def print_final_list(octets, my_dict1):
                   BASE2 + octet + "\t= " + my_dict1[BASE2 + octet])
 
 
-def test_connection():
-    """Ping two well-known sites like Google and Yahoo just to verify the
-    ping command is working as expected in your distribution.
-    """
-    print("************************************************************")
-    print("Pinging Google and Yahoo to test connection...")
-    ip3 = ["google.com", "yahoo.com"]
-    for ip in ip3:
-        ping_reply = subprocess.run(["ping", "-c", "2", ip])
-        if ping_reply.returncode == 0:
-            print("Success pinging " + ip)
-        else:
-            print("No respone from " + ip + ". Please review your connection.")
-    print("************************************************************")
-
-
 def main():
     start = time.time()
     print("Running...")
-    test_connection()
 
 # Create list of ip addresses
-    ip_address1 = [BASE1 + "{}".format(i) for i in range(0, 256)]
-    ip_address2 = [BASE2 + "{}".format(i) for i in range(0, 256)]
-    joint_list_ip = ip_address1 + ip_address2
+    joint_list_ip = [BASE1 + "{}".format(i) for i in range(0, 256)] + \
+                    [BASE2 + "{}".format(i) for i in range(0, 256)]
 
 # Read command line arguments to decide which ip addresses to skip
     if len(sys.argv) > 1:
@@ -126,9 +122,11 @@ def main():
         joint_list_ip = skip_address(to_skip, joint_list_ip)
 
 # Start pinging
-    start_pinging(joint_list_ip)
-    octet_list = find_differences()
-    print_final_list(octet_list, my_dict1)
+    results = start_pinging(joint_list_ip)
+# Parse and print results
+    ip_results = parse_results(results)
+    octets = find_differences(ip_results)
+    print_final_list(octets, ip_results)
 
     print("\nRunning time: " + str(time.time() - start) + " seconds")
 
