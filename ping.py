@@ -35,7 +35,7 @@ def ping(ip):
     """
     ping_reply = subprocess.run(["ping", "-c", "2", ip],
                                 stderr=subprocess.PIPE,
-                                stdout=subprocess.PIPE) 
+                                stdout=subprocess.PIPE)
     return '{}__{}'.format(ping_reply.returncode, ip)
 
 
@@ -74,8 +74,12 @@ def find_differences(my_dict1):
     """
     Compare the value in the dictionary to detect which pings are different.
     For example: '192.168.1.55' vs '192.168.2.55'
+    Args:
+        dict_ips (dict): addresses and value of the pings. Example:
+                         {'192.168.2.239' : 0, '192.168.1.80' : 1}
     Return:
-        octet (list): ip addresses that have different values.
+        octet (string list): ip addresses that have different values.
+                             Example ['5', '128', '200']
     """
     octet = []
     for i in range(256):
@@ -93,7 +97,7 @@ def print_final_list(octets, my_dict1):
     Display the final output of the program. In other words, print the
     list of the pair of ip addresses that had different values.
     Args:
-        my_dict1 (dict): key=ip address, value= "Yes" or "No"
+        my_dict1 (dict): key=ip address, value= 0 or 1
         octet (list): ip addresses that have different values.
     """
     if not octets:
@@ -104,8 +108,8 @@ def print_final_list(octets, my_dict1):
               "the other one:")
         for octet in octets:
             print(octet.rjust(3) + " --> " + BASE1 + octet +
-                  "\t= " + my_dict1[BASE1 + octet] + ",\t" +
-                  BASE2 + octet + "\t= " + my_dict1[BASE2 + octet])
+                  "\t= " + str(my_dict1[BASE1 + octet]) + ",\t" +
+                  BASE2 + octet + "\t= " + str(my_dict1[BASE2 + octet]))
 
 
 def main():
